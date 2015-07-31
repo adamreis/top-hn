@@ -1,0 +1,4 @@
+cron:
+- description: fetch new HN posts every minute
+  url: /scrape
+  schedule: every 1 mins
