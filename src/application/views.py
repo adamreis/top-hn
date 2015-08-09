@@ -12,6 +12,7 @@ from flask import request, render_template, flash, url_for, redirect
 from flask_cache import Cache
 from application import app
 from models import Post
+from datetime import datetime
 import urllib2
 import json
 
@@ -38,18 +39,22 @@ def scrape():
     top = request_json('https://hacker-news.firebaseio.com/v0/topstories.json')[:100]
     for index, story_id in enumerate(top):
         story = request_json('https://hacker-news.firebaseio.com/v0/item/{}.json'.format(story_id))
-        
+        rank = index + 1
         existingPost = Post.query(Post.url == story.get('url')).fetch()
         if existingPost:
             existingPost = existingPost[0]
-            existingPost.highest_rank = min(index, existingPost.highest_rank)
+            existingPost.times.append(datetime.now())
+            existingPost.ranks.append(rank)
+            existingPost.highest_rank = min(rank, existingPost.highest_rank)
             existingPost.put()
         else:
             newPost = Post(
                 time = story.get('time'),
                 post_id = story.get('id'),
                 url = story.get('url'),
-                highest_rank = index
+                highest_rank = rank,
+                ranks = [rank],
+                times = [datetime.now()]
                 )
             newPost.put()
 

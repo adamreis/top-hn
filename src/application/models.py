@@ -14,3 +14,5 @@ class Post(ndb.Model):
     post_id = ndb.IntegerProperty(required=True)
     url = ndb.StringProperty(required=True)
     highest_rank = ndb.IntegerProperty(required=True)
+    ranks = ndb.IntegerProperty(repeated=True)
+    times = ndb.DateTimeProperty(repeated=True)
